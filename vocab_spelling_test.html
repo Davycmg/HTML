@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>拼字挑戰 Unit 1-2</title>
+<style>
+:root{--bg:#0f2a4a;--ink:#1f2937;--ok:#16a34a;--bad:#dc2626;--blue:#2563eb}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:linear-gradient(#0f2a4a,#1e4d7a);color:#fff;user-select:none}
+.wrap{max-width:640px;margin:0 auto;padding:14px}
+h1{text-align:center;font-size:1.5rem;margin:8px 0 2px}
+.sub{text-align:center;color:#9fc3e8;margin-bottom:14px;font-size:.92rem}
+.card{background:#fff;color:var(--ink);border-radius:20px;padding:16px;margin-bottom:12px}
+.card h2{margin:0 0 10px;font-size:1.05rem}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid #cbd5e1;background:#fff;border-radius:999px;padding:8px 16px;font-size:1rem;cursor:pointer}
+.chip.sel{background:var(--blue);border-color:var(--blue);color:#fff}
+.big{display:block;width:100%;padding:16px;border:none;border-radius:16px;font-size:1.3rem;font-weight:800;color:#fff;cursor:pointer;margin-bottom:10px;background:linear-gradient(135deg,#f59e0b,#ef4444)}
+.big.blue{background:linear-gradient(135deg,#3b82f6,#8b5cf6)}
+.big.green{background:linear-gradient(135deg,#10b981,#059669)}
+.bigword{font-size:2.8rem;font-weight:800;letter-spacing:.08em;margin:8px 0 4px;color:#1d4ed8;word-break:break-word}
+.bigword .cap{color:#dc2626}
+.legend{font-size:.8rem;letter-spacing:0;color:#dc2626;font-weight:600}
+.mtag{display:inline-block;font-size:.8rem;padding:2px 8px;border-radius:99px;background:#e2e8f0}
+.btn{border:none;border-radius:12px;padding:9px 14px;font-size:1rem;cursor:pointer;background:#e2e8f0;color:var(--ink)}
+.btn.end{background:#ef4444;color:#fff}
+.hide{display:none!important}
+/* HUD */
+.top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:700;margin-bottom:6px}
+.top .sp{flex:1}
+.pill:empty{display:none}
+.pill{background:rgba(0,0,0,.35);padding:5px 12px;border-radius:12px}
+#clock{font-size:1.25rem;color:#fde047;font-variant-numeric:tabular-nums}
+#clock.low{color:#fca5a5;animation:blink .6s infinite alternate}
+@keyframes blink{to{opacity:.5}}
+.bar{height:10px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden;margin-bottom:8px}
+.bar>i{display:block;height:100%;width:0;background:#38bdf8}
+#wbar>i{background:#22c55e;width:100%}
+/* 題目 */
+.q{text-align:center;color:var(--ink);padding:6px 0 2px}
+.qe{font-size:4rem;line-height:1.1}
+.qz{font-size:2rem;font-weight:800;margin:4px 0}
+.qu{display:inline-block;font-size:.75rem;color:#fff;border-radius:99px;padding:2px 10px;background:#3b82f6}
+.qu.u2{background:#10b981}
+#slots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:14px 0 6px;min-height:52px}
+.slot{width:38px;height:48px;border:3px solid #94a3b8;border-radius:10px;background:#f1f5f9;font-size:1.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;color:#0f172a;text-transform:none}
+.slot.f{background:#bfdbfe;border-color:#3b82f6}
+.slot.cur{border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.4)}
+.slot.hint{background:#fef08a;border-color:#eab308}
+.slot.good{background:#86efac;border-color:#16a34a}
+.slot.wrong{background:#fecaca;border-color:#dc2626}
+.slot.rev{background:#fde68a;border-color:#f59e0b}
+.gap{width:16px}
+.ap{font-size:1.8rem;font-weight:800;align-self:center;color:#0f172a}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pop{animation:pop .3s}
+@keyframes pop{50%{transform:scale(1.12)}}
+#fb{text-align:center;font-weight:800;min-height:28px;margin:4px 0}
+#fb.ok{color:var(--ok)}#fb.bad{color:var(--bad)}
+#tiles{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.tile{width:50px;height:54px;border:none;border-radius:12px;background:#fde68a;font-size:1.6rem;font-weight:800;color:#0f172a;box-shadow:0 4px 0 rgba(0,0,0,.25);cursor:pointer}
+.tile:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+.tile.used{opacity:.25;pointer-events:none}
+.tile.bad{background:#fecaca}
+#typeIn,#sTypeIn{position:absolute;opacity:0;pointer-events:none;left:-9999px}
+.row{display:flex;gap:8px;justify-content:center;margin-top:10px}
+.tiny{font-size:.8rem;color:#64748b;text-align:center;margin-top:6px}
+/* 結果 */
+.res{color:var(--ink);text-align:center}
+.res .stars{font-size:2.6rem}
+.res .big2{font-size:2.8rem;font-weight:800;color:var(--blue)}
+.res table{width:100%;border-collapse:collapse;text-align:left;margin-top:6px}
+.res td{padding:5px 8px;border-bottom:1px solid #e2e8f0}
+.mode-desc{font-size:.85rem;color:#64748b;margin-top:6px}
+.nin{width:100%;padding:10px 12px;font-size:1.1rem;border:2px solid #cbd5e1;border-radius:12px;color:var(--ink)}
+.hl details{border-bottom:1px solid #e2e8f0;padding:6px 0}
+.hl summary{cursor:pointer;font-size:.92rem;line-height:1.5}
+.hl table{font-size:.88rem;margin-top:6px}
+.hl .row{justify-content:flex-start;margin-top:8px}
+.ok-t{color:var(--ok);font-weight:700}.bad-t{color:var(--bad);font-weight:700}
+#saveNote{font-size:.85rem;color:#64748b;margin:6px 0 10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- 選單 -->
+<div id="menu">
+  <h1>✏️ 拼字挑戰</h1>
+  <div class="sub">Wonder World Unit 1 + Unit 2 ・ 一次考完全部單字</div>
+  <div class="card"><h2>範圍</h2><div class="opts" id="unitOpts"></div>
+    <div class="mode-desc">共 <b id="cnt"></b> 個單字，每個都會考到，不限時間，慢慢拼</div>
+    <div class="mode-desc" id="masterySum"></div></div>
+  <div class="card"><h2>學習順序</h2><div class="opts" id="studyOpts"></div>
+    <div class="mode-desc" id="studyNote"></div></div>
+  <div class="card"><h2>作答方式</h2><div class="opts" id="modeOpts"></div>
+    <div class="mode-desc" id="modeDesc"></div></div>
+  <div class="card"><h2>姓名（會寫在成績單上）</h2>
+    <input id="nameIn" class="nin" placeholder="輸入名字（可不填）" maxlength="20" autocomplete="off"></div>
+  <button class="big green" id="studyBtn">📖 學習模式（先學再考）</button>
+  <button class="big" id="startBtn">🚀 開始測驗</button>
+  <button class="big blue" id="vocabBtn">📚 單字表與熟練度</button>
+  <button class="big blue" id="histBtn">📜 歷史紀錄</button>
+  <div class="card" id="syncCard"><h2>🔄 換裝置／備份進度</h2>
+    <div class="mode-desc" id="cloudNote"></div>
+    <div class="opts" style="margin-top:8px">
+      <button class="btn" id="syCopy">📋 複製進度代碼</button>
+      <button class="btn" id="syFile">💾 下載進度檔</button>
+    </div>
+    <div class="mode-desc" style="margin-top:10px">在新裝置貼上代碼，或選擇進度檔，就會<b>合併</b>進來（不會蓋掉新裝置上已有的紀錄）：</div>
+    <textarea id="syText" class="nin" rows="3" placeholder="在這裡貼上進度代碼" style="font-size:.9rem;user-select:text"></textarea>
+    <div class="opts" style="margin-top:8px">
+      <button class="btn" id="syPaste">⬇ 匯入代碼</button>
+      <button class="btn" id="syPick">📂 選擇進度檔</button>
+      <input type="file" id="syFileIn" accept=".json,.txt,application/json,text/plain" class="hide">
+    </div>
+    <div class="mode-desc" id="syMsg" style="margin-top:8px;font-weight:700"></div>
+  </div>
+  <div class="card" style="font-size:.93rem;line-height:1.7">
+    <b>規則</b><br>
+    ① 看中文和圖案，拼出英文單字。會自動唸一次，可再按 🔊 重聽。<br>
+    ② <b>不限時間</b>，想多久都可以；上方只會幫你計時，看自己花了多久。<br>
+    ③ 連續答對有 <b>🔥 連擊</b> 加分。<br>
+    ④ 💡 提示<b>整場只有 1 次</b>，會補一個字母（扣 5 分、連擊中斷），想清楚再用。<br>
+    ⑤ 全部考完後，會自動再考一次拼錯的單字。<br>
+    ⑥ <b>注意大小寫</b>：國家名稱要大寫（Japan），the UK／the USA／the ROC 的 UK、USA、ROC 全大寫，I'd like 的 I 也要大寫。<br>
+    ⑦ 成績會<b>自動存</b>在這個裝置；要換裝置，用上方「換裝置／備份進度」。也可以<b>下載成績單</b>（Excel 可開）。<br>
+    ⑧ <b>📖 學習模式</b>：每個單字走三步 —— ①看＋聽 ②看著抄 ③蓋起來默寫。不熟的單字會排在前面，考試和學習的結果都會更新「熟練度」。
+  </div>
+  <div style="text-align:center"><button class="btn muteBtn">🔊 音效開</button></div>
+</div>
+
+<!-- 遊戲 -->
+<div id="game" class="hide">
+  <div class="top">
+    <span class="pill" id="clock">⏱ 0:00</span>
+    <span class="pill" id="prog"></span>
+    <span class="pill" id="score">⭐ 0</span>
+    <span class="pill" id="combo"></span>
+    <span class="sp"></span>
+    <button class="btn muteBtn">🔊</button>
+    <button class="btn end" id="endBtn">結束</button>
+  </div>
+  <div class="bar" id="gbar"><i></i></div>
+  <div class="card">
+    <div class="q">
+      <span class="qu" id="qu"></span>
+      <div class="qe" id="qe"></div>
+      <div class="qz" id="qz"></div>
+      <button class="btn" id="hearBtn">🔊 聽發音</button>
+    </div>
+    <div id="slots"></div>
+    <div id="fb"></div>
+    <div id="tiles"></div>
+    <input id="typeIn" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text">
+    <div class="row">
+      <button class="btn" id="hintBtn">💡 提示（剩 1 次）</button>
+      <button class="btn" id="backBtn">⌫ 退格</button>
+      <button class="btn" id="skipBtn">⏭ 不會，跳過</button>
+    </div>
+    <div class="tiny" id="tip"></div>
+  </div>
+</div>
+
+<!-- 學習 -->
+<div id="study" class="hide">
+  <div class="top">
+    <span class="pill" id="sProg"></span>
+    <span class="pill" id="sStep"></span>
+    <span class="sp"></span>
+    <button class="btn muteBtn">🔊</button>
+    <button class="btn end" id="sEnd">結束學習</button>
+  </div>
+  <div class="bar"><i id="sBar" style="background:#34d399"></i></div>
+  <div class="card" id="sCard">
+    <div class="q">
+      <span class="qu" id="sU"></span>
+      <div class="qe" id="sE"></div>
+      <div class="qz" id="sZ"></div>
+      <div class="bigword" id="sWord"></div>
+      <div class="row" style="margin-top:4px"><button class="btn" id="sHear">🔊 聽</button><button class="btn" id="sSlow">🐢 慢慢聽</button></div>
+    </div>
+    <div id="sSlots"></div>
+    <div id="sFb"></div>
+    <div id="sTiles"></div>
+    <input id="sTypeIn" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <div class="row" id="sRow1"><button class="big" id="sNext" style="margin:6px 0 0">➜ 我記住了，跟著拼</button></div>
+    <div class="row">
+      <button class="btn" id="sSkip">⏩ 我會了，直接默寫</button>
+      <button class="btn" id="sLook">↩ 回去看單字</button>
+      <button class="btn" id="sPeek">👀 偷看一下</button>
+      <button class="btn" id="sBackBtn">⌫ 退格</button>
+    </div>
+    <div class="tiny" id="sTip"></div>
+  </div>
+  <div class="card res hide" id="sSum">
+    <div class="stars" id="sStars"></div>
+    <div class="big2" id="sBig"></div>
+    <div id="sStats" style="margin:8px 0;line-height:1.8"></div>
+    <div id="sList"></div>
+    <button class="big green" id="sAgain" style="margin-top:14px">📖 再學一次不熟的</button>
+    <button class="big" id="sToTest">📝 去測驗</button>
+    <button class="btn" id="sHome">回選單</button>
+  </div>
+</div>
+
+<!-- 單字表 -->
+<div id="vocab" class="hide">
+  <h1>📚 單字表</h1>
+  <div class="card hl">
+    <div class="row" style="margin:0 0 8px;justify-content:flex-start"><button class="btn" id="vStudy">📖 開始學習</button><button class="btn" id="vReset">♻ 重設熟練度</button><button class="btn" id="vBack">← 返回</button></div>
+    <div id="vSum" class="tiny" style="text-align:left;margin-bottom:6px"></div>
+    <table id="vTable"></table>
+  </div>
+</div>
+
+<!-- 歷史紀錄 -->
+<div id="hist" class="hide">
+  <h1>📜 歷史紀錄</h1>
+  <div class="card hl">
+    <div class="row" style="margin:0 0 6px"><button class="btn" id="hAll">💾 全部下載</button><button class="btn" id="hClear">🗑 清空</button><button class="btn" id="hBack">← 返回</button></div>
+    <div id="hList"></div>
+  </div>
+</div>
+
+<!-- 結果 -->
+<div id="result" class="hide">
+  <div class="card res">
+    <div class="stars" id="rStars"></div>
+    <div class="big2" id="rScore"></div>
+    <div id="rStats" style="margin:8px 0;line-height:1.8"></div>
+    <div id="rMiss"></div>
+    <div id="saveNote"></div>
+    <button class="big blue" id="dlBtn">💾 下載成績單（CSV）</button>
+    <div class="row" style="margin:0 0 12px"><button class="btn" id="copyBtn">📋 複製成績文字</button></div>
+    <button class="big green" id="studyMissBtn">📖 去學習拼錯的單字</button>
+    <button class="big" id="againBtn" style="margin-top:6px">🔁 再挑戰一次</button>
+    <button class="big blue" id="missBtn">📝 只練拼錯的單字</button>
+    <button class="btn" id="homeBtn">回選單</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+/* ===== 單字資料 ===== */
+const WORDS=[
+ [1,"Australia","澳大利亞","🦘"],[1,"Canada","加拿大","🍁"],[1,"France","法國","🗼"],
+ [1,"India","印度","🕌"],[1,"Japan","日本","🗻"],[1,"Taiwan","臺灣","🧋"],
+ [1,"the UK","英國","💂"],[1,"the USA","美國","🗽"],[1,"the ROC","中華民國","🇹🇼"],
+ [1,"clerk","店員","🧑‍💼"],[1,"perm","燙髮","💇"],[1,"girl","女孩","👧"],
+ [1,"skirt","裙子","👗"],[1,"nurse","護理師","👩‍⚕️"],[1,"purse","皮包","👛"],
+ [1,"mammal","哺乳動物","🐋"],[1,"cyclist","自行車選手","🚴"],
+ [2,"cold","感冒","🤧"],[2,"cough","咳嗽","😷"],[2,"fever","發燒","🤒"],
+ [2,"headache","頭痛","🤕"],[2,"stomachache","胃痛","😣"],[2,"toothache","牙痛","🦷"],
+ [2,"runny nose","流鼻水","👃"],[2,"sore throat","喉嚨痛","😖"],[2,"wrong","錯誤的；不對勁的","❓"],
+ [2,"head","頭","🙆"],[2,"tooth","牙齒","🦷"],[2,"nose","鼻子","👃"],
+ [2,"throat","喉嚨","🗣️"],[2,"stomach","胃；肚子","🫃"],
+ [2,"car","汽車","🚗"],[2,"farm","農場","🚜"],[2,"party","派對","🎉"],
+ [2,"corn","玉米","🌽"],[2,"horse","馬","🐴"],[2,"pork","豬肉","🥓"],
+ [2,"stay","保持","🧘"],[2,"take","服用（藥品）","💊"],[2,"symptom","症狀","🌡️"],
+ [2,"I'd like","我想要","🙋"]
+].map(([u,en,zh,e])=>({u,en,zh,e}));
+
+const HINT_COST=5;
+const $=id=>document.getElementById(id);
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const isLetter=c=>/[A-Za-z]/.test(c);
+const touch=("ontouchstart" in window)||navigator.maxTouchPoints>0;
+let selUnit="12",selMode=touch?"tiles":"type",mute=false;
+const pool=()=>WORDS.filter(w=>selUnit.includes(String(w.u)));
+function show(id){["menu","game","result","hist","study","vocab"].forEach(x=>$(x).classList.toggle("hide",x!==id))}
+
+/* ===== 聲音 ===== */
+let AC=null;
+function ctx(){AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();return AC}
+function beep(f,d=.12,type="sine",v=.12,delay=0){
+  if(mute)return;
+  try{const a=ctx(),t=a.currentTime+delay,o=a.createOscillator(),g=a.createGain();
+    o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);
+    o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d)}catch(e){}
+}
+const sndKey=()=>beep(520,.05,"triangle",.07);
+const sndOk=()=>{beep(660,.1);beep(880,.15,"sine",.12,.09)};
+const sndCombo=n=>[0,1,2].forEach(i=>beep(660+n*40+i*160,.12,"triangle",.1,i*.07));
+const sndBad=()=>beep(170,.28,"sawtooth",.08);
+const sndWin=()=>[523,659,784,1047,1319].forEach((f,i)=>beep(f,.22,"triangle",.14,i*.1));
+function speak(t,rate){if(mute||!("speechSynthesis"in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=rate||.85;speechSynthesis.speak(u)}
+document.querySelectorAll(".muteBtn").forEach(b=>b.onclick=()=>{
+  mute=!mute;
+  document.querySelectorAll(".muteBtn").forEach(x=>x.textContent=(mute?"🔇":"🔊")+(x.closest("#menu")?(mute?" 音效關":" 音效開"):""));
+});
+
+/* ===== 選單 ===== */
+const MODES=[
+  {id:"type",name:"⌨️ 打字",desc:"用鍵盤直接打出英文（電腦最快）。"},
+  {id:"tiles",name:"🔤 點字母",desc:"點下方的字母方塊來拼（手機、平板方便）。"}
+];
+function renderMenu(){
+  $("unitOpts").innerHTML=[["1","Unit 1"],["2","Unit 2"],["12","Unit 1 + 2"]].map(([id,n])=>`<button class="chip ${id===selUnit?"sel":""}" data-u="${id}">${n}</button>`).join("");
+  $("modeOpts").innerHTML=MODES.map(m=>`<button class="chip ${m.id===selMode?"sel":""}" data-m="${m.id}">${m.name}</button>`).join("");
+  $("modeDesc").textContent=MODES.find(m=>m.id===selMode).desc;
+  $("cnt").textContent=pool().length;
+  $("histBtn").textContent=`📜 歷史紀錄（${loadHist().length}）`;
+  const mm=loadMast(),pl=pool(),mc={good:0,weak:0};pl.forEach(w=>{const k=masteryOf(w.en,mm);if(k==="good")mc.good++;if(k==="weak")mc.weak++});
+  $("masterySum").textContent=`熟練度：⭐已熟練 ${mc.good}／${pl.length}　❌需加強 ${mc.weak}`;
+  $("studyOpts").innerHTML=[["all","全部單字（不熟的排前面）"],["weak","只學還沒熟的"]].map(([id,n])=>`<button class="chip ${id===studyFilter?"sel":""}" data-sf="${id}">${n}</button>`).join("");
+}
+$("unitOpts").onclick=e=>{const b=e.target.closest("[data-u]");if(b){selUnit=b.dataset.u;renderMenu()}};
+$("modeOpts").onclick=e=>{const b=e.target.closest("[data-m]");if(b){selMode=b.dataset.m;renderMenu()}};
+let studyFilter="all";
+$("studyOpts").onclick=e=>{const b=e.target.closest("[data-sf]");if(b){studyFilter=b.dataset.sf;$("studyNote").textContent="";renderMenu()}};
+const UNIT_LABEL={1:"Unit 1",2:"Unit 2",12:"Unit 1 + 2"};
+$("startBtn").onclick=()=>start(pool());
+$("againBtn").onclick=()=>start(pool());
+$("missBtn").onclick=()=>start([...lastMissed.values()],"錯題練習");
+$("homeBtn").onclick=()=>{show("menu");renderMenu()};
+
+/* ===== 遊戲 ===== */
+let G=null,lastMissed=new Map();
+function start(words,label){
+  if(!words.length){show("menu");return}
+  if(G){clearInterval(G.timer)}
+  G={queue:shuffle(words).map(w=>({w,retry:false})),qi:0,score:0,combo:0,maxCombo:0,
+     firstTry:0,done:0,total:words.length,missed:new Map(),results:[],log:[],scope:label||UNIT_LABEL[selUnit],
+     t0:performance.now(),cur:null,state:"idle",timer:0,wordT0:0,typed:[],filled:[],hinted:[],hintUsed:false,mistakes:0,tileUsed:[],timeUp:false,hintsLeft:1};
+  updHintBtn();
+  show("game");
+  $("combo").textContent="";$("score").textContent="⭐ 0";
+  $("tip").textContent=(selMode==="type"?"直接用鍵盤打字（要大寫的用 Shift），Backspace 退格，打滿自動判斷":"點下面的字母方塊依序拼出單字")+"　※注意大小寫";
+  G.timer=setInterval(tickTimer,100);
+  nextWord();
+}
+const elapsed=()=>(performance.now()-G.t0)/1000;
+function fmtT(s){s=Math.max(0,Math.floor(s));return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`}
+function tickTimer(){
+  if(!G)return;
+  $("clock").textContent="⏱ "+fmtT(elapsed());
+  const total=G.queue.length;
+  $("gbar").firstElementChild.style.width=Math.min(100,(G.qi-(G.state==="play"?1:0))/total*100)+"%";
+}
+function nextWord(){
+  if(G.qi>=G.queue.length){
+    // 全部考完；有拼錯且時間還夠，就自動複習一輪
+    const redo=[...G.missed.values()].filter(w=>!G.queue.some(q=>q.retry&&q.w===w));
+    if(redo.length){
+      G.queue.push(...shuffle(redo).map(w=>({w,retry:true})));
+      $("fb").textContent="";
+    }else{finish("🎉 全部考完了！");return}
+  }
+  const item=G.queue[G.qi++];G.cur=item;const w=item.w;
+  G.chars=[...w.en];
+  G.filled=G.chars.map(c=>isLetter(c)?null:c);   // null = 待填
+  G.hinted=G.chars.map(()=>false);G.typed=[];G.hintUsed=false;G.mistakes=0;G.state="play";
+  G.tileUsed=[];G.wordT0=performance.now();
+  $("qe").textContent=w.e;$("qz").textContent=w.zh;
+  $("qu").textContent="Unit "+w.u;$("qu").className="qu u"+w.u;
+  $("fb").textContent="";$("fb").className="";
+  const retried=G.queue.filter(q=>q.retry).length;
+  $("prog").textContent=item.retry?`🔁 複習 ${G.qi-(G.queue.length-retried)}/${retried}`:`第 ${G.qi}/${G.total} 個`;
+  $("skipBtn").disabled=false;updHintBtn();
+  renderSlots();buildTiles();
+  speak(w.en);
+  if(selMode==="type"){$("typeIn").value="";$("typeIn").focus({preventScroll:true})}
+}
+function renderSlots(cls){
+  const cur=G.filled.findIndex((c,i)=>c===null&&isLetter(G.chars[i]));
+  $("slots").innerHTML=G.chars.map((c,i)=>{
+    if(c===" ")return `<span class="gap"></span>`;
+    if(!isLetter(c))return `<span class="ap">${c}</span>`;
+    const f=G.filled[i];
+    return `<span class="slot ${f?"f":""} ${G.hinted[i]?"hint":""} ${cls||""} ${(!cls&&i===cur)?"cur":""}">${f||""}</span>`;
+  }).join("");
+}
+function buildTiles(){
+  const box=$("tiles");
+  if(selMode!=="tiles"){box.innerHTML="";return}
+  // 只放這個單字需要的字母（大小寫照單字），沒有多餘的字母
+  const set=shuffle(G.chars.filter(isLetter));
+  box.innerHTML=set.map((c,i)=>`<button class="tile" data-i="${i}" data-c="${c}">${c}</button>`).join("");
+}
+/* --- 輸入 --- */
+function nextIdx(){return G.filled.findIndex((c,i)=>c===null&&isLetter(G.chars[i]))}
+function putLetter(ch,fromTile){
+  if(!G||G.state!=="play")return;
+  const idx=nextIdx();if(idx<0)return;
+  sndKey();
+  if(fromTile){
+    // 點字母方塊：對才填入，錯的方塊變紅並記一次失誤
+    if(ch!==G.chars[idx]){G.mistakes++;sndBad();return false}
+  }
+  G.filled[idx]=ch;G.typed.push(idx);
+  renderSlots();
+  if(nextIdx()<0)judge(true);
+  return true;
+}
+function backspace(){
+  if(!G||G.state!=="play"||selMode==="tiles")return;
+  const idx=G.typed.pop();if(idx===undefined)return;
+  G.filled[idx]=null;renderSlots();
+}
+$("tiles").addEventListener("click",e=>{
+  const t=e.target.closest(".tile");if(!t||t.classList.contains("used"))return;
+  const r=putLetter(t.dataset.c,true);
+  if(r===true)t.classList.add("used");
+  else{t.classList.add("bad");setTimeout(()=>t.classList.remove("bad"),350)}
+});
+document.addEventListener("keydown",e=>{
+  if(!G||G.state!=="play"||$("game").classList.contains("hide"))return;
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  if(e.key==="Backspace"){e.preventDefault();backspace();return}
+  if(e.key==="Tab"){e.preventDefault();useHint();return}
+  if(selMode==="type"&&/^[a-zA-Z]$/.test(e.key)){e.preventDefault();putLetter(e.key,false)}
+  else if(selMode==="tiles"&&/^[a-zA-Z]$/.test(e.key)){
+    // 電腦鍵盤也能玩字母方塊模式
+    const t=[...document.querySelectorAll("#tiles .tile:not(.used)")].find(x=>x.dataset.c===e.key);
+    if(t)t.click();else{G.mistakes++;sndBad()}
+  }
+});
+// 手機打字：軟鍵盤輸入
+$("typeIn").addEventListener("input",e=>{
+  const v=e.target.value;e.target.value="";
+  for(const ch of v)if(/[a-zA-Z]/.test(ch))putLetter(ch,false);
+});
+$("slots").addEventListener("click",()=>{if(selMode==="type")$("typeIn").focus()});
+$("backBtn").onclick=backspace;
+$("hearBtn").onclick=()=>G&&G.cur&&speak(G.cur.w.en);
+$("hintBtn").onclick=()=>useHint();
+$("skipBtn").onclick=()=>{if(G&&G.state==="play")judge(false,"skip")};
+$("endBtn").onclick=()=>finish("已結束");
+function updHintBtn(){
+  const b=$("hintBtn");if(!G)return;
+  b.textContent=G.hintsLeft>0?`💡 提示（剩 ${G.hintsLeft} 次）`:"💡 提示已用完";
+  b.disabled=G.hintsLeft<=0||G.state!=="play";
+}
+function useHint(){
+  if(!G||G.state!=="play"||G.hintsLeft<=0)return;
+  // 先清掉打錯的字母，再補上下一個正確字母
+  let idx=-1;
+  for(let i=0;i<G.chars.length;i++){
+    if(!isLetter(G.chars[i]))continue;
+    const f=G.filled[i];
+    if(f===null){idx=i;break}
+    if(f!==G.chars[i]&&!G.hinted[i]){
+      for(let j=i;j<G.chars.length;j++)if(isLetter(G.chars[j])&&!G.hinted[j]){G.filled[j]=null}
+      G.typed=G.typed.filter(k=>k<i);idx=i;break;
+    }
+  }
+  if(idx<0)return;
+  G.hintsLeft--;updHintBtn();
+  G.filled[idx]=G.chars[idx];G.hinted[idx]=true;
+  G.hintUsed=true;G.combo=0;$("combo").textContent="";
+  G.score=Math.max(0,G.score-HINT_COST);$("score").textContent="⭐ "+G.score;
+  const t=document.querySelector(`#tiles .tile:not(.used)[data-c="${G.chars[idx]}"]`);if(t)t.classList.add("used");
+  sndKey();renderSlots();
+  if(nextIdx()<0)judge(true);
+}
+/* --- 判斷 --- */
+function judge(filledAll,why){
+  if(!G||G.state!=="play")return;
+  G.state="judge";
+  const w=G.cur.w;
+  let ok=false,caseOnly=false;
+  const typedStr=G.chars.map((c,i)=>isLetter(c)?(G.filled[i]??"_"):c).join("");
+  if(filledAll){
+    ok=G.chars.every((c,i)=>!isLetter(c)||G.filled[i]===c);   // 大小寫要完全一樣
+    caseOnly=!ok&&G.chars.every((c,i)=>!isLetter(c)||String(G.filled[i]).toLowerCase()===c.toLowerCase());
+  }
+  $("hintBtn").disabled=true;$("skipBtn").disabled=true;
+  recMast(w.en,ok&&!G.hintUsed&&G.mistakes===0);
+  if(ok){
+    const clean=!G.hintUsed&&G.mistakes===0;
+    G.combo++;G.maxCombo=Math.max(G.maxCombo,G.combo);
+    const mult=1+Math.min(G.combo-1,5)*0.2;
+    const gain=Math.round((10+G.chars.filter(isLetter).length)*mult);
+    G.score+=gain;
+    if(!G.cur.retry){G.done++;if(clean)G.firstTry++}
+    G.results.push({w,ok:true});
+    G.log.push({en:w.en,zh:w.zh,u:w.u,ok:true,retry:G.cur.retry,hint:G.hintUsed,typed:typedStr});
+    // 這個字在複習時答對 → 從錯題移除
+    if(G.cur.retry)G.missed.delete(w.en);
+    $("slots").querySelectorAll(".slot").forEach(s=>s.classList.add("good","pop"));
+    $("fb").className="ok";$("fb").textContent=`✅ ${w.en} = ${w.zh}　+${gain}${G.combo>=2?`　🔥×${G.combo}`:""}`;
+    $("score").textContent="⭐ "+G.score;$("combo").textContent=G.combo>=2?"🔥 連擊 "+G.combo:"";
+    G.combo>=3?sndCombo(Math.min(G.combo,8)):sndOk();
+    speak(w.en);
+    setTimeout(()=>{if(G&&G.state==="judge")nextWord()},G.combo>=3?850:1100);
+  }else{
+    G.combo=0;$("combo").textContent="";
+    if(!G.cur.retry){G.done++}
+    G.missed.set(w.en,w);G.results.push({w,ok:false});
+    G.log.push({en:w.en,zh:w.zh,u:w.u,ok:false,retry:G.cur.retry,hint:G.hintUsed,skip:why==='skip',caseOnly,typed:typedStr});
+    // 顯示正確答案
+    G.filled=G.chars.map(c=>isLetter(c)?c:c);
+    const typedWrong=filledAll;
+    $("slots").classList.remove("shake");void $("slots").offsetWidth;$("slots").classList.add("shake");
+    renderSlots(typedWrong?"wrong":"rev");
+    // 標出拼錯的位置在重繪前已覆蓋；改為整排顯示答案
+    $("slots").querySelectorAll(".slot").forEach(s=>{s.classList.remove("wrong");s.classList.add("rev")});
+    $("fb").className="bad";
+    $("fb").textContent=(why==="skip"?"⏭ 跳過：":caseOnly?"🔠 大小寫不對：":"❌ 拼錯了：")+`正確是 ${w.en}（${w.zh}）`;
+    sndBad();speak(w.en);
+    setTimeout(()=>{if(G&&G.state==="judge")nextWord()},2300);
+  }
+}
+/* --- 結束 --- */
+let lastRec=null;
+function finish(title){
+  if(!G)return;
+  clearInterval(G.timer);
+  const x=G;G=null;
+  lastMissed=new Map(x.missed);
+  const used=(performance.now()-x.t0)/1000;
+  show("result");
+  const attempted=x.done,firstTry=x.firstTry;
+  const pct=x.total?Math.round(firstTry/x.total*100):0;
+  $("rStars").textContent=pct>=90?"🌟🌟🌟":pct>=70?"🌟🌟☆":pct>=40?"🌟☆☆":"☆☆☆";
+  $("rScore").textContent="⭐ "+x.score;
+  const bestKey="vq_spell_best_"+x.scope;let best=null,newRec=false;
+  if(x.done>=x.total&&x.scope!=="錯題練習"){
+    try{best=parseFloat(localStorage.getItem(bestKey))||null;if(!best||x.score>best){localStorage.setItem(bestKey,String(x.score));newRec=true;syncDirty()}}catch(e){}
+  }
+  $("rStats").innerHTML=[
+    `<b>${title}</b>　（${x.scope}）`,
+    `用時 ${fmtDur(used)}　・　考了 ${attempted}/${x.total} 個單字`,
+    `一次就拼對（沒用提示）：<b>${firstTry}</b> / ${x.total}（${pct}%）`,
+    `最高連擊：🔥 ${x.maxCombo}`,
+    newRec?"🎉 新的最高分紀錄！":(best?`最高分紀錄：${best}`:"")
+  ].filter(Boolean).join("<br>");
+  // 沒考到的單字（提前結束）也列入複習
+  const untested=x.queue.filter(q=>!q.retry&&!x.results.some(r=>r.w===q.w)).map(q=>q.w);
+  untested.forEach(w=>lastMissed.set(w.en,w));
+  const rows=[...x.missed.values()].map(w=>`<tr><td>${w.e}</td><td><b>${w.en}</b></td><td>${w.zh}</td><td>❌</td></tr>`)
+    .concat(untested.map(w=>`<tr><td>${w.e}</td><td><b>${w.en}</b></td><td>${w.zh}</td><td>⏳未考</td></tr>`));
+  $("rMiss").innerHTML=rows.length?`<b>需要再練習的單字（${rows.length}）</b><table>${rows.join("")}</table>`:"<b>🎊 所有單字都拼對了！</b>";
+  $("missBtn").classList.toggle("hide",!lastMissed.size);$("studyMissBtn").classList.toggle("hide",!lastMissed.size);
+  // ---- 自動存檔 ----
+  lastRec={id:Date.now(),date:new Date().toISOString(),name:$("nameIn").value.trim(),scope:x.scope,mode:selMode,
+    total:x.total,done:x.done,firstTry:x.firstTry,score:x.score,maxCombo:x.maxCombo,seconds:Math.round(used),title,
+    log:x.log,untested:untested.map(w=>({en:w.en,zh:w.zh,u:w.u}))};
+  if(x.log.length){
+    const h=loadHist();h.push(lastRec);
+    $("saveNote").textContent=saveHist(h)?"✅ 成績已自動儲存在這個瀏覽器（首頁的「歷史紀錄」可以看）。想留一份，請按下載。":"⚠️ 這個瀏覽器無法自動儲存，請按「下載成績單」自己留一份。";
+  }else $("saveNote").textContent="（還沒作答，沒有成績可存）";
+  $("dlBtn").disabled=!x.log.length;$("copyBtn").disabled=!x.log.length;
+  if(!rows.length||pct>=70)sndWin();
+}
+/* ===== 成績匯出 / 歷史 ===== */
+const HKEY="vq_spell_history_v1",NKEY="vq_spell_name";
+function loadHist(){try{return JSON.parse(localStorage.getItem(HKEY)||"[]")}catch(e){return []}}
+function saveHist(a){try{localStorage.setItem(HKEY,JSON.stringify(a.slice(-300)));syncDirty();return true}catch(e){return false}}
+const p2=n=>String(n).padStart(2,"0");
+function fmtDate(iso){const d=new Date(iso);return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())} ${p2(d.getHours())}:${p2(d.getMinutes())}`}
+function fmtDur(sec){return `${Math.floor(sec/60)}分${p2(Math.floor(sec%60))}秒`}
+function statusOf(l){
+  if(l.ok)return l.retry?"複習後拼對":(l.hint?"拼對（用提示）":"一次拼對");
+  return l.skip?"跳過":(l.caseOnly?"大小寫錯":"拼錯");
+}
+const CSV_HEAD=["日期","姓名","範圍","作答方式","單元","單字","中文","結果","你的答案","用提示","回合"];
+function recRows(r){
+  const d=fmtDate(r.date),m=r.mode==="tiles"?"點字母":"打字";
+  const rows=r.log.map(l=>[d,r.name,r.scope,m,"Unit "+l.u,l.en,l.zh,statusOf(l),l.typed,l.hint?"是":"否",l.retry?"複習":"第一輪"]);
+  (r.untested||[]).forEach(w=>rows.push([d,r.name,r.scope,m,"Unit "+w.u,w.en,w.zh,"未考","","",""]));
+  return rows;
+}
+const csvEsc=v=>{v=String(v??"");return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+function toCSV(recs){return "﻿"+[CSV_HEAD,...recs.flatMap(recRows)].map(r=>r.map(csvEsc).join(",")).join("\r\n")}
+async function download(name,text){
+  try{const dl=window.claude&&window.claude.use?await window.claude.use("downloads"):null;
+    if(dl){await dl.save({filename:name,data:text});return}}catch(e){if(e&&e.code==="declined")return}
+  const blob=new Blob([text],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800);
+}
+function fileName(r){const d=new Date(r.date);return `拼字成績_${r.name||"我"}_${d.getFullYear()}${p2(d.getMonth()+1)}${p2(d.getDate())}-${p2(d.getHours())}${p2(d.getMinutes())}.csv`}
+function textReport(r){
+  const pct=r.total?Math.round(r.firstTry/r.total*100):0;
+  const wrong=[...new Set(r.log.filter(l=>!l.ok&&!l.retry).map(l=>`${l.en}（${l.zh}）`))];
+  const un=(r.untested||[]).map(w=>`${w.en}（${w.zh}）`);
+  return [`拼字挑戰成績`,`日期：${fmtDate(r.date)}`,r.name?`姓名：${r.name}`:"",`範圍：${r.scope}（${r.mode==="tiles"?"點字母":"打字"}）`,
+    `分數：${r.score}　一次就拼對：${r.firstTry}/${r.total}（${pct}%）　用時：${fmtDur(r.seconds)}　最高連擊：${r.maxCombo}`,
+    `拼錯的單字：${wrong.length?wrong.join("、"):"無"}`,un.length?`未考：${un.join("、")}`:""].filter(Boolean).join("\n");
+}
+$("dlBtn").onclick=()=>{if(lastRec)download(fileName(lastRec),toCSV([lastRec]))};
+$("copyBtn").onclick=async()=>{
+  if(!lastRec)return;const t=textReport(lastRec);let ok=false;
+  try{await navigator.clipboard.writeText(t);ok=true}catch(e){
+    try{const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();ok=document.execCommand("copy");ta.remove()}catch(_){}
+  }
+  $("copyBtn").textContent=ok?"✅ 已複製":"⚠️ 複製失敗，請改用下載";
+  setTimeout(()=>{$("copyBtn").textContent="📋 複製成績文字"},1800);
+};
+// 姓名記住
+try{$("nameIn").value=localStorage.getItem(NKEY)||""}catch(e){}
+$("nameIn").addEventListener("input",()=>{try{localStorage.setItem(NKEY,$("nameIn").value.trim());syncDirty()}catch(e){}});
+// 歷史紀錄
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function renderHist(){
+  const h=loadHist().slice().reverse();
+  $("hList").innerHTML=h.length?h.map(r=>{
+    const pct=r.total?Math.round(r.firstTry/r.total*100):0;
+    const rows=r.log.map(l=>`<tr><td><b>${esc(l.en)}</b></td><td>${esc(l.zh)}</td><td class="${l.ok?"ok-t":"bad-t"}">${statusOf(l)}</td><td>${l.ok?"":esc(l.typed)}</td></tr>`)
+      .concat((r.untested||[]).map(w=>`<tr><td><b>${esc(w.en)}</b></td><td>${esc(w.zh)}</td><td>未考</td><td></td></tr>`)).join("");
+    return `<details><summary>${fmtDate(r.date)}｜${esc(r.name||"（未填名）")}｜${esc(r.scope)}｜⭐${r.score}｜一次拼對 ${r.firstTry}/${r.total}（${pct}%）｜${fmtDur(r.seconds)}</summary>
+      <table><tr><th>單字</th><th>中文</th><th>結果</th><th>你的答案</th></tr>${rows}</table>
+      <div class="row"><button class="btn" data-dl="${r.id}">💾 下載這次</button><button class="btn" data-del="${r.id}">🗑 刪除這筆</button></div></details>`;
+  }).join(""):`<div class="tiny">還沒有紀錄。考完一次就會自動存在這裡。</div>`;
+  $("hAll").disabled=!h.length;$("hClear").disabled=!h.length;
+}
+$("histBtn").onclick=()=>{renderHist();show("hist")};
+$("hBack").onclick=()=>{show("menu");renderMenu()};
+$("hList").addEventListener("click",e=>{
+  const dl=e.target.closest("[data-dl]"),del=e.target.closest("[data-del]");
+  const h=loadHist();
+  if(dl){const r=h.find(x=>String(x.id)===dl.dataset.dl);if(r)download(fileName(r),toCSV([r]))}
+  if(del){
+    if(del.dataset.arm!=="1"){del.dataset.arm="1";del.textContent="再按一次確認刪除";setTimeout(()=>{del.dataset.arm="";del.textContent="🗑 刪除這筆"},3000);return}
+    {const m=loadMeta();m.hDel=[...m.hDel,String(del.dataset.del)].slice(-500);saveMeta(m)}saveHist(h.filter(x=>String(x.id)!==del.dataset.del));renderHist();
+  }
+});
+$("hAll").onclick=()=>{const h=loadHist();if(h.length)download(`拼字成績_全部紀錄_${fmtDate(new Date().toISOString()).replace(/[: ]/g,"").replace("-","").replace("-","")}.csv`,toCSV(h))};
+$("hClear").onclick=()=>{
+  const b=$("hClear");
+  if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="再按一次確認清空";setTimeout(()=>{b.dataset.arm="";b.textContent="🗑 清空"},3000);return}
+  try{localStorage.removeItem(HKEY);const m=loadMeta();m.hClear=Date.now();saveMeta(m);syncDirty()}catch(e){}b.dataset.arm="";b.textContent="🗑 清空";renderHist();
+};
+/* ===== 熟練度（考試與學習共用）===== */
+const MKEY="vq_spell_mastery_v1";
+function loadMast(){try{return JSON.parse(localStorage.getItem(MKEY)||"{}")}catch(e){return {}}}
+function saveMast(m){try{localStorage.setItem(MKEY,JSON.stringify(m));syncDirty()}catch(e){}}
+function recMast(en,good){const m=loadMast(),o=m[en]||{r:0,w:0,last:"",t:0};if(good)o.r++;else o.w++;o.last=good?"ok":"bad";o.t=Date.now();m[en]=o;saveMast(m)}
+function masteryOf(en,m){const o=(m||loadMast())[en];if(!o)return "new";if(o.last==="bad")return "weak";if(o.last==="ok"&&o.r>=2)return "good";return "mid"}
+const M_LABEL={new:"🆕 新單字",weak:"❌ 需加強",mid:"🔸 學習中",good:"⭐ 已熟練"};
+const M_ORDER={weak:0,new:1,mid:2,good:3};
+
+/* ===== 學習模式：① 看＋聽 → ② 看著抄 → ③ 蓋起來默寫 ===== */
+let S=null;
+const STEP_TXT={1:"① 看一看・聽一聽",2:"② 跟著拼（看著抄）",3:"③ 默寫（蓋起來）"};
+function capHTML(en){return [...en].map(c=>c===" "?'<span style="display:inline-block;width:.45em"></span>':`<span class="${/[A-Z]/.test(c)?"cap":""}">${esc(c)}</span>`).join("")}
+function startStudy(words,label,force){
+  const m=loadMast();let list=words.slice();
+  if(!force&&studyFilter==="weak")list=list.filter(w=>masteryOf(w.en,m)!=="good");
+  if(!list.length){show("menu");renderMenu();$("studyNote").textContent="🎉 這個範圍的單字都已經熟練了！想再複習，請選「全部單字」。";return}
+  $("studyNote").textContent="";
+  list.sort((a,b)=>M_ORDER[masteryOf(a.en,m)]-M_ORDER[masteryOf(b.en,m)]||Math.random()-.5);
+  S={words:list,i:0,stage:1,state:"idle",chars:[],filled:[],typed:[],peek:false,tries3:0,results:[],label:label||UNIT_LABEL[selUnit]};
+  show("study");$("sCard").classList.remove("hide");$("sSum").classList.add("hide");
+  $("sTip").textContent=selMode==="type"?"用鍵盤打字，Backspace 退格（要大寫的用 Shift）":"點下面的字母方塊依序拼出單字";
+  studyWord();
+}
+function studyWord(){
+  const w=S.words[S.i];S.w=w;S.chars=[...w.en];S.tries3=0;S.peek=false;
+  $("sE").textContent=w.e;$("sZ").textContent=w.zh;
+  $("sU").textContent="Unit "+w.u;$("sU").className="qu u"+w.u;
+  $("sProg").textContent=`第 ${S.i+1}/${S.words.length} 個`;
+  $("sBar").style.width=(S.i/S.words.length*100)+"%";
+  setStage(1);
+}
+function setStage(n){
+  S.stage=n;S.state=n===1?"read":"spell";
+  S.filled=S.chars.map(c=>isLetter(c)?null:c);S.typed=[];
+  $("sStep").textContent=STEP_TXT[n];
+  $("sWord").innerHTML=capHTML(S.w.en)+(/[A-Z]/.test(S.w.en)?'<div class="legend">紅色字母要大寫</div>':"");
+  $("sWord").classList.toggle("hide",n===3);
+  $("sSlots").classList.toggle("hide",n===1);
+  $("sTiles").classList.toggle("hide",n===1||selMode!=="tiles");
+  $("sRow1").classList.toggle("hide",n!==1);
+  $("sSkip").classList.toggle("hide",n!==1);
+  $("sPeek").classList.toggle("hide",n!==3);
+  $("sLook").classList.toggle("hide",n===1);
+  $("sBackBtn").classList.toggle("hide",n===1||selMode==="tiles");
+  $("sFb").textContent="";$("sFb").className="";
+  if(n===1)speak(S.w.en);
+  else{
+    sRenderSlots();sBuildTiles();
+    if(n===3)speak(S.w.en);
+    if(selMode==="type"){$("sTypeIn").value="";$("sTypeIn").focus({preventScroll:true})}
+  }
+}
+function sRenderSlots(cls){
+  const cur=S.filled.findIndex((c,i)=>c===null&&isLetter(S.chars[i]));
+  $("sSlots").innerHTML=S.chars.map((c,i)=>{
+    if(c===" ")return `<span class="gap"></span>`;
+    if(!isLetter(c))return `<span class="ap">${c}</span>`;
+    const f=S.filled[i];
+    return `<span class="slot ${f?"f":""} ${cls||""} ${(!cls&&i===cur)?"cur":""}">${f||""}</span>`;
+  }).join("");
+}
+function sBuildTiles(){
+  const box=$("sTiles");
+  if(selMode!=="tiles"){box.innerHTML="";return}
+  box.innerHTML=shuffle(S.chars.filter(isLetter)).map((c,i)=>`<button class="tile" data-c="${c}">${c}</button>`).join("");
+}
+function sNextIdx(){return S.filled.findIndex((c,i)=>c===null&&isLetter(S.chars[i]))}
+function sPut(ch,fromTile){
+  if(!S||S.state!=="spell")return;
+  const idx=sNextIdx();if(idx<0)return;
+  sndKey();
+  if(fromTile&&ch!==S.chars[idx]){sndBad();return false}
+  S.filled[idx]=ch;S.typed.push(idx);sRenderSlots();
+  if(sNextIdx()<0)sJudge();
+  return true;
+}
+function sBackspace(){
+  if(!S||S.state!=="spell"||selMode==="tiles")return;
+  const i=S.typed.pop();if(i===undefined)return;S.filled[i]=null;sRenderSlots();
+}
+function sJudge(){
+  if(!S||S.state!=="spell")return;
+  const ok=S.chars.every((c,i)=>!isLetter(c)||S.filled[i]===c);
+  const w=S.w;
+  if(S.stage===2){
+    if(ok){
+      S.state="wait";sndOk();speak(w.en);
+      $("sSlots").querySelectorAll(".slot").forEach(x=>x.classList.add("good","pop"));
+      $("sFb").className="ok";$("sFb").textContent="✅ 很好！現在蓋起來，自己默寫一次";
+      setTimeout(()=>{if(S&&S.w===w&&S.state==="wait")setStage(3)},1100);
+    }else{
+      sndBad();S.state="wait";
+      const caseOnly=S.chars.every((c,i)=>!isLetter(c)||String(S.filled[i]).toLowerCase()===c.toLowerCase());
+      $("sSlots").classList.remove("shake");void $("sSlots").offsetWidth;$("sSlots").classList.add("shake");
+      $("sFb").className="bad";$("sFb").textContent=caseOnly?"🔠 大小寫不對，看看紅色字母，再試一次":"❌ 不太一樣，看著上面的單字再試一次";
+      setTimeout(()=>{if(S&&S.w===w&&S.stage===2){S.filled=S.chars.map(c=>isLetter(c)?null:c);S.typed=[];S.state="spell";sRenderSlots();sBuildTiles();$("sFb").textContent="";if(selMode==="type")$("sTypeIn").focus({preventScroll:true})}},1100);
+    }
+    return;
+  }
+  // 階段 3：默寫
+  S.tries3++;
+  if(ok){
+    const clean=S.tries3===1&&!S.peek;
+    S.state="wait";clean?sndOk():sndBad();speak(w.en);
+    $("sSlots").querySelectorAll(".slot").forEach(x=>x.classList.add("good","pop"));
+    $("sFb").className="ok";$("sFb").textContent=clean?`🌟 默寫一次就對！${w.en} = ${w.zh}`:`✅ 對了！${w.en} = ${w.zh}（再多練習幾次會更熟）`;
+    sFinishWord(clean);
+  }else{
+    S.state="wait";sndBad();speak(w.en);
+    const caseOnly=S.chars.every((c,i)=>!isLetter(c)||String(S.filled[i]).toLowerCase()===c.toLowerCase());
+    S.filled=[...S.chars];sRenderSlots("rev");
+    $("sSlots").classList.remove("shake");void $("sSlots").offsetWidth;$("sSlots").classList.add("shake");
+    $("sFb").className="bad";$("sFb").textContent=`${caseOnly?"🔠 大小寫不對：":"❌ 差一點：正確是 "}${w.en}（${w.zh}）`;
+    if(S.tries3>=2)sFinishWord(false);
+    else setTimeout(()=>{if(S&&S.w===w&&S.state==="wait"){setStage(2);$("sFb").className="";$("sFb").textContent="先抄一遍，再默寫一次";}},2400);
+  }
+}
+function sFinishWord(clean){
+  const w=S.w;recMast(w.en,clean);S.results.push({w,clean});
+  setTimeout(()=>{if(!S||S.w!==w)return;S.i++;S.i>=S.words.length?studyEnd(true):studyWord()},clean?1200:2400);
+}
+function studyEnd(complete){
+  if(!S)return;
+  const x=S;S=null;
+  $("sCard").classList.add("hide");$("sSum").classList.remove("hide");
+  const clean=x.results.filter(r=>r.clean).length,n=x.results.length;
+  const weak=x.results.filter(r=>!r.clean).map(r=>r.w);
+  $("sStars").textContent=!n?"📖":(clean===n?"🌟🌟🌟":clean/n>=.6?"🌟🌟☆":"🌟☆☆");
+  $("sBig").textContent=n?`默寫一次對 ${clean} / ${n}`:"還沒學完任何單字";
+  $("sStats").innerHTML=`<b>${complete?"🎉 這一輪學完了！":"已結束學習"}</b>（${esc(x.label)}）<br>學了 ${n} 個單字，再想一想：<b>${weak.length}</b> 個還不夠熟`;
+  $("sList").innerHTML=weak.length?`<b>還不夠熟的單字</b><table>${weak.map(w=>`<tr><td>${w.e}</td><td><b>${esc(w.en)}</b></td><td>${esc(w.zh)}</td></tr>`).join("")}</table>`:(n?"<b>🎊 每一個都默寫對了！</b>":"");
+  lastStudyWeak=weak;
+  $("sAgain").classList.toggle("hide",!weak.length);
+  if(n&&clean===n)sndWin();
+}
+let lastStudyWeak=[];
+$("studyBtn").onclick=()=>startStudy(pool());
+$("studyMissBtn").onclick=()=>startStudy([...lastMissed.values()],"拼錯的單字",true);
+$("sAgain").onclick=()=>startStudy(lastStudyWeak,"不熟的單字",true);
+$("sToTest").onclick=()=>start(pool());
+$("sHome").onclick=()=>{show("menu");renderMenu()};
+$("sEnd").onclick=()=>studyEnd(false);
+$("sNext").onclick=()=>{if(S&&S.state==="read")setStage(2)};
+$("sSkip").onclick=()=>{if(S&&S.state==="read")setStage(3)};
+$("sLook").onclick=()=>{if(S&&S.stage>1&&S.state!=="wait")setStage(1)};
+$("sHear").onclick=()=>S&&S.w&&speak(S.w.en);
+$("sSlow").onclick=()=>S&&S.w&&speak(S.w.en,.45);
+$("sBackBtn").onclick=sBackspace;
+$("sPeek").onclick=()=>{
+  if(!S||S.stage!==3||S.state!=="spell")return;
+  S.peek=true;$("sWord").classList.remove("hide");
+  setTimeout(()=>{if(S&&S.stage===3)$("sWord").classList.add("hide")},1600);
+};
+$("sTiles").addEventListener("click",e=>{
+  const t=e.target.closest(".tile");if(!t||t.classList.contains("used"))return;
+  const r=sPut(t.dataset.c,true);
+  if(r===true)t.classList.add("used");
+  else if(r===false){t.classList.add("bad");setTimeout(()=>t.classList.remove("bad"),350)}
+});
+$("sSlots").addEventListener("click",()=>{if(selMode==="type"&&S)$("sTypeIn").focus()});
+$("sTypeIn").addEventListener("input",e=>{
+  const v=e.target.value;e.target.value="";
+  for(const ch of v)if(/[a-zA-Z]/.test(ch))sPut(ch,false);
+});
+document.addEventListener("keydown",e=>{
+  if(!S||$("study").classList.contains("hide"))return;
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  if(S.state==="read"){if(e.key==="Enter"||e.key===" "){e.preventDefault();setStage(2)}return}
+  if(S.state!=="spell")return;
+  if(e.key==="Backspace"){e.preventDefault();sBackspace();return}
+  if(/^[a-zA-Z]$/.test(e.key)){
+    e.preventDefault();
+    if(selMode==="type")sPut(e.key,false);
+    else{const t=[...document.querySelectorAll("#sTiles .tile:not(.used)")].find(x=>x.dataset.c===e.key);if(t)t.click();else sndBad()}
+  }
+});
+/* ===== 單字表 ===== */
+function renderVocab(){
+  const m=loadMast(),p=pool(),cnt={new:0,weak:0,mid:0,good:0};
+  $("vTable").innerHTML=`<tr><th></th><th>單字</th><th>中文</th><th>熟練度</th></tr>`+p.map(w=>{
+    const st=masteryOf(w.en,m),o=m[w.en];cnt[st]++;
+    return `<tr><td>${w.e}</td><td><button class="btn" data-say="${esc(w.en)}">🔊 ${esc(w.en)}</button></td><td>${esc(w.zh)}</td><td><span class="mtag">${M_LABEL[st]}</span>${o?`<div class="tiny" style="text-align:left">對 ${o.r}・錯 ${o.w}</div>`:""}</td></tr>`}).join("");
+  $("vSum").textContent=`⭐已熟練 ${cnt.good}　🔸學習中 ${cnt.mid}　❌需加強 ${cnt.weak}　🆕新單字 ${cnt.new}（${UNIT_LABEL[selUnit]}）`;
+}
+$("vocabBtn").onclick=()=>{renderVocab();show("vocab")};
+$("vBack").onclick=()=>{show("menu");renderMenu()};
+$("vStudy").onclick=()=>startStudy(pool());
+$("vTable").addEventListener("click",e=>{const b=e.target.closest("[data-say]");if(b)speak(b.dataset.say)});
+$("vReset").onclick=()=>{
+  const b=$("vReset");
+  if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="再按一次確認重設";setTimeout(()=>{b.dataset.arm="";b.textContent="♻ 重設熟練度"},3000);return}
+  try{localStorage.removeItem(MKEY);const m=loadMeta();m.mReset=Date.now();saveMeta(m);syncDirty()}catch(e){}b.dataset.arm="";b.textContent="♻ 重設熟練度";renderVocab();
+};
+
+/* ===== 換裝置：進度代碼／進度檔／雲端同步 ===== */
+const META="vq_spell_meta_v1";
+function loadMeta(){const d={mReset:0,hClear:0,hDel:[]};try{return Object.assign(d,JSON.parse(localStorage.getItem(META)||"{}"))}catch(e){return d}}
+function saveMeta(m){try{localStorage.setItem(META,JSON.stringify(m))}catch(e){}}
+function getBest(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.indexOf("vq_spell_best_")===0)o[k.slice(14)]=parseFloat(localStorage.getItem(k))||0}}catch(e){}return o}
+function makeSnap(slim){
+  let h=loadHist();
+  if(slim)h=h.map((r,i)=>i>=h.length-40?r:Object.assign({},r,{log:[]}));
+  let name="";try{name=localStorage.getItem(NKEY)||""}catch(e){}
+  return {app:"vq_spell",v:1,saved:Date.now(),name:name,mast:loadMast(),hist:h,best:getBest(),meta:loadMeta()};
+}
+function mergeSnap(r){
+  if(!r||r.app!=="vq_spell")throw new Error("格式不對");
+  const lm=loadMeta(),rm=r.meta||{};
+  const meta={mReset:Math.max(lm.mReset||0,rm.mReset||0),hClear:Math.max(lm.hClear||0,rm.hClear||0),hDel:[...new Set([...(lm.hDel||[]),...(rm.hDel||[])])].slice(-500)};
+  const A=loadMast(),B=r.mast||{},M={};
+  new Set([...Object.keys(A),...Object.keys(B)]).forEach(k=>{
+    const a=A[k],b=B[k],pick=!a?b:!b?a:((b.t||0)>(a.t||0)?b:a);
+    if(pick&&(pick.t||0)>meta.mReset)M[k]=pick;
+  });
+  const byId={};
+  [...(r.hist||[]),...loadHist()].forEach(x=>{if(x&&x.id!=null){const old=byId[x.id];if(!old||(old.log||[]).length<(x.log||[]).length)byId[x.id]=x}});
+  const del=new Set(meta.hDel);
+  const H=Object.values(byId).filter(x=>x.id>meta.hClear&&!del.has(String(x.id))).sort((a,b)=>a.id-b.id).slice(-300);
+  const nb=r.best||{},lb=getBest();
+  try{
+    localStorage.setItem(MKEY,JSON.stringify(M));
+    localStorage.setItem(HKEY,JSON.stringify(H));
+    saveMeta(meta);
+    Object.keys(nb).forEach(k=>{if((nb[k]||0)>(lb[k]||0))localStorage.setItem("vq_spell_best_"+k,String(nb[k]))});
+    if(r.name&&!($("nameIn").value.trim())){localStorage.setItem(NKEY,r.name);$("nameIn").value=r.name}
+  }catch(e){throw new Error("這個瀏覽器不能儲存")}
+  renderMenu();
+  return {words:Object.keys(M).length,hist:H.length};
+}
+const b64=s=>btoa(unescape(encodeURIComponent(s)));
+const unb64=s=>decodeURIComponent(escape(atob(s)));
+function syMsg(t,bad){const e=$("syMsg");e.textContent=t;e.style.color=bad?"#dc2626":"#15803d"}
+async function copyText(t){
+  try{await navigator.clipboard.writeText(t);return true}catch(e){
+    try{const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();const ok=document.execCommand("copy");ta.remove();return ok}catch(_){return false}}
+}
+function importText(t){
+  t=(t||"").trim();if(!t){syMsg("還沒有內容",1);return}
+  try{
+    const txt=t[0]==="{"?t:unb64(t.replace(/\s+/g,""));
+    const r=mergeSnap(JSON.parse(txt));
+    syMsg(`✅ 匯入完成：熟練度 ${r.words} 個單字、歷史 ${r.hist} 筆`);
+    $("syText").value="";syncDirty();
+  }catch(e){syMsg("❌ 無法匯入，請確認代碼完整貼上（"+e.message+"）",1)}
+}
+$("syCopy").onclick=async()=>{
+  const code=b64(JSON.stringify(makeSnap(true)));
+  const ok=await copyText(code);
+  if(ok)syMsg("✅ 已複製！到新裝置貼上即可（代碼只含熟練度、成績摘要；完整逐題紀錄請用進度檔）");
+  else{$("syText").value=code;$("syText").select();syMsg("請手動全選複製上面的代碼")}
+};
+$("syFile").onclick=async()=>{
+  const d=new Date();
+  await download(`拼字進度_${d.getFullYear()}${p2(d.getMonth()+1)}${p2(d.getDate())}.json`,JSON.stringify(makeSnap(false)));
+  syMsg("已下載進度檔，傳到新裝置後用「選擇進度檔」匯入");
+};
+$("syPaste").onclick=()=>importText($("syText").value);
+$("syPick").onclick=()=>$("syFileIn").click();
+$("syFileIn").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const rd=new FileReader();rd.onload=()=>importText(String(rd.result));rd.onerror=()=>syMsg("讀不到檔案",1);rd.readAsText(f);e.target.value="";
+};
+/* 雲端同步（只有發佈成網頁、並登入 Claude 時才會啟用） */
+let cloudDoc=null,cloudTimer=0,cloudBusy=false;
+function cloudNote(t){$("cloudNote").textContent=t}
+function syncDirty(){
+  if(!cloudDoc)return;
+  clearTimeout(cloudTimer);cloudTimer=setTimeout(cloudPush,1500);
+}
+async function cloudPush(){
+  if(!cloudDoc||cloudBusy)return;cloudBusy=true;
+  try{await cloudDoc.set({payload:JSON.stringify(makeSnap(true)),saved:Date.now()});cloudNote("☁️ 雲端同步已開啟：進度會自動同步到登入同一個 Claude 帳號的裝置")}
+  catch(e){cloudNote("☁️ 雲端暫時存不進去，進度仍保存在本機；可用下方代碼備份")}
+  cloudBusy=false;
+}
+async function cloudInit(){
+  cloudNote("💾 進度存在「這台裝置的這個瀏覽器」：換手機／電腦、換瀏覽器、用無痕模式、清除瀏覽資料，都看不到原本進度。換裝置前請先「複製進度代碼」或「下載進度檔」，到新裝置匯入。");
+  try{
+    if(!(window.claude&&window.claude.use))return;
+    const [db,user]=await Promise.all([window.claude.use("db"),window.claude.use("user")]);
+    if(!db||!user)return;
+    const id=await user.id();if(!id)return;
+    cloudDoc=db.collection("data/users/"+id).doc("spell_progress");
+    const snap=await cloudDoc.get();
+    if(snap.exists){const d=snap.data();if(d&&d.payload){try{mergeSnap(JSON.parse(d.payload))}catch(e){}}}
+    await cloudPush();
+  }catch(e){cloudDoc=null}
+}
+cloudInit();
+renderMenu();
+</script>
+</body>
+</html>
