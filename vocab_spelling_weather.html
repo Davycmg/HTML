@@ -43,6 +43,8 @@ h1{text-align:center;font-size:1.5rem;margin:8px 0 2px}
 .qz{font-size:2rem;font-weight:800;margin:4px 0}
 .qu{display:inline-block;font-size:.75rem;color:#fff;border-radius:99px;padding:2px 10px;background:#3b82f6}
 .qu.u2{background:#10b981}
+.qu.u0{background:#f59e0b}
+.qu.u3{background:#8b5cf6}
 #slots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:14px 0 6px;min-height:52px}
 .slot{width:38px;height:48px;border:3px solid #94a3b8;border-radius:10px;background:#f1f5f9;font-size:1.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;color:#0f172a;text-transform:none}
 .slot.f{background:#bfdbfe;border-color:#3b82f6}
@@ -89,7 +91,7 @@ h1{text-align:center;font-size:1.5rem;margin:8px 0 2px}
 <!-- 選單 -->
 <div id="menu">
   <h1>✏️ 拼字挑戰</h1>
-  <div class="sub">Unit 1 How's the Weather? + Unit 2 Are You Thirsty? ・ 一次考完全部單字</div>
+  <div class="sub">開學複習 + Unit 1 How's the Weather? + Unit 2 Are You Thirsty? + Review 1</div>
   <div class="card"><h2>範圍</h2><div class="opts" id="unitOpts"></div>
     <div class="mode-desc">共 <b id="cnt"></b> 個單字，每個都會考到，不限時間，慢慢拼</div>
     <div class="mode-desc" id="masterySum"></div></div>
@@ -125,7 +127,7 @@ h1{text-align:center;font-size:1.5rem;margin:8px 0 2px}
     ③ 連續答對有 <b>🔥 連擊</b> 加分。<br>
     ④ 💡 提示<b>整場只有 1 次</b>，會補一個字母（扣 5 分、連擊中斷），想清楚再用。<br>
     ⑤ 全部考完後，會自動再考一次拼錯的單字。<br>
-    ⑥ <b>注意大小寫</b>：這一冊的單字全部是小寫。<br>
+    ⑥ <b>注意大小寫</b>：只有 OK 要全部大寫，其他單字都是小寫。<br>
     ⑦ 成績會<b>自動存</b>在這個裝置；要換裝置，用上方「換裝置／備份進度」。也可以<b>下載成績單</b>（Excel 可開）。<br>
     ⑧ <b>📖 學習模式</b>：每個單字走三步 —— ①看＋聽 ②看著抄 ③蓋起來默寫。不熟的單字會排在前面，考試和學習的結果都會更新「熟練度」。
   </div>
@@ -247,12 +249,10 @@ h1{text-align:center;font-size:1.5rem;margin:8px 0 2px}
 <script>
 /* ===== 單字資料 ===== */
 const WORDS=[
- [1,"sunny","晴朗的","☀️"],[1,"rainy","下雨的","🌧️"],[1,"cloudy","多雲的","☁️"],[1,"windy","颳風的","🌬️"],
- [1,"hot","熱的","🥵"],[1,"warm","溫暖的","🌤️"],[1,"cool","涼爽的","🍃"],[1,"cold","冷的","🥶"],
- [2,"angry","生氣的","😠"],[2,"happy","快樂的","😄"],[2,"sad","難過的","😢"],[2,"tired","累的","😪"],
- [2,"full","飽的","🍽️"],[2,"hungry","餓的","🍔"],[2,"thirsty","口渴的","🥤"],
- [2,"sixteen","十六","🔢"],[2,"seventeen","十七","🔢"],[2,"eighteen","十八","🔢"],
- [2,"nineteen","十九","🔢"],[2,"twenty","二十","🔢"]
+ [0, "cat", "貓", "🐱"],[0, "dog", "狗", "🐶"],[0, "bird", "鳥", "🐦"],[0, "fish", "魚", "🐟"],[0, "animals", "動物", "🐾"],[0, "big", "大的", "🐘"],[0, "small", "小的", "🐭"],[0, "size", "大小", "📏"],[0, "write", "寫", "✍️"],[0, "dance", "跳舞", "💃"],[0, "draw", "畫畫", "🎨"],[0, "swim", "游泳", "🏊"],[0, "jump", "跳", "🦘"],[0, "sing", "唱歌", "🎤"],[0, "read", "閱讀", "📖"],[0, "abilities", "能力", "💪"],[0, "high", "高高地", "⬆️"],[0, "hamburger", "漢堡", "🍔"],[0, "hot dog", "熱狗", "🌭"],[0, "cake", "蛋糕", "🍰"],[0, "juice", "果汁", "🧃"],[0, "ice cream", "冰淇淋", "🍦"],[0, "orange", "柳橙", "🍊"],[0, "name", "名字", "🏷️"],[0, "helpful", "樂於助人的", "🤝"],[0, "look", "看", "👀"],[0, "say", "說", "🗣️"],[0, "cover", "蓋住", "🙈"],[0, "check", "檢查", "✅"],[0, "step", "步驟", "👣"],[0, "driver", "司機", "🚗"],[0, "repeat", "重複", "🔁"],[0, "play", "玩", "⚽"],[0, "finish", "終點", "🏁"],[0, "aloud", "大聲地", "📢"],[0, "time", "時間", "⏰"],[0, "three", "三", "3️⃣"],[0, "six", "六", "6️⃣"],[0, "sixteen", "十六", "🔢"],[0, "seventeen", "十七", "🔢"],[0, "eighteen", "十八", "🔢"],[0, "nineteen", "十九", "🔢"],[0, "twenty", "二十", "🔢"],[0, "add", "加", "➕"],[0, "start", "起點", "🚦"],[0, "pizza", "披薩", "🍕"],
+ [1, "weather", "天氣", "🌦️"],[1, "sunny", "晴朗的", "☀️"],[1, "rainy", "下雨的", "🌧️"],[1, "cloudy", "多雲的", "☁️"],[1, "windy", "颳風的", "🌬️"],[1, "hot", "熱的", "🥵"],[1, "warm", "溫暖的", "🌤️"],[1, "cool", "涼爽的", "🍃"],[1, "cold", "冷的", "🥶"],[1, "stormy", "暴風雨的", "⛈️"],[1, "snowy", "下雪的", "❄️"],[1, "foggy", "有霧的", "🌫️"],[1, "partly cloudy", "晴時多雲", "⛅"],[1, "forecast", "預報", "📺"],[1, "typhoon", "颱風", "🌀"],[1, "kimono", "和服", "👘"],[1, "pretty", "漂亮的", "🌸"],[1, "today", "今天", "📅"],[1, "fun", "樂趣", "🎉"],[1, "go", "去", "🚶"],[1, "count", "數數", "🧮"],[1, "one", "一", "1️⃣"],[1, "two", "二", "2️⃣"],[1, "stop", "停", "🛑"],[1, "grandma", "奶奶", "👵"],[1, "very", "非常", "💯"],[1, "song", "歌", "🎵"],[1, "who", "誰", "🙋"],[1, "what", "什麼", "❓"],[1, "how", "如何", "🤔"],[1, "ready", "準備好的", "🏃"],[1, "friend", "朋友", "🧑‍🤝‍🧑"],
+ [2, "thirsty", "口渴的", "🥤"],[2, "hungry", "餓的", "🍔"],[2, "full", "飽的", "🍽️"],[2, "tired", "累的", "😪"],[2, "happy", "快樂的", "😄"],[2, "sad", "難過的", "😢"],[2, "angry", "生氣的", "😠"],[2, "worried", "擔心的", "😟"],[2, "feelings", "感覺", "💭"],[2, "OK", "還好", "👌"],[2, "fine", "很好的", "👍"],[2, "come", "來", "👋"],[2, "open", "打開", "🚪"],[2, "sesame", "芝麻", "🌾"],[2, "welcome", "歡迎", "🤗"],[2, "see", "看見", "👁️"],[2, "talk", "談話", "💬"],[2, "hooray", "萬歲", "🙌"],[2, "when", "當…的時候", "⏳"],[2, "music", "音樂", "🎶"],[2, "run", "跑", "🏃"],[2, "gap", "縫隙", "🕳️"],[2, "cap", "帽子", "🧢"],[2, "gut", "腸子", "🌭"],[2, "cut", "切", "✂️"],[2, "gum", "口香糖", "🍬"],[2, "cop", "警察", "👮"],
+ [3, "outside", "外面", "🏞️"],[3, "but", "但是", "↔️"],[3, "go to", "去（某地）", "🚌"],[3, "bored", "無聊的", "🥱"],[3, "book", "書", "📚"],[3, "home", "家", "🏠"],[3, "zoo", "動物園", "🦁"],[3, "day", "日子", "🗓️"],[3, "a lot of", "很多", "➕"]
 ].map(([u,en,zh,e])=>({u,en,zh,e}));
 
 const HINT_COST=5;
@@ -260,7 +260,7 @@ const $=id=>document.getElementById(id);
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const isLetter=c=>/[A-Za-z]/.test(c);
 const touch=("ontouchstart" in window)||navigator.maxTouchPoints>0;
-let selUnit="12",selMode=touch?"tiles":"type",mute=false;
+let selUnit="0123",selMode=touch?"tiles":"type",mute=false;
 const pool=()=>WORDS.filter(w=>selUnit.includes(String(w.u)));
 function show(id){["menu","game","result","hist","study","vocab"].forEach(x=>$(x).classList.toggle("hide",x!==id))}
 
@@ -290,7 +290,7 @@ const MODES=[
   {id:"tiles",name:"🔤 點字母",desc:"點下方的字母方塊來拼（手機、平板方便）。"}
 ];
 function renderMenu(){
-  $("unitOpts").innerHTML=[["1","Unit 1"],["2","Unit 2"],["12","Unit 1 + 2"]].map(([id,n])=>`<button class="chip ${id===selUnit?"sel":""}" data-u="${id}">${n}</button>`).join("");
+  $("unitOpts").innerHTML=[["0","開學複習"],["1","Unit 1"],["2","Unit 2"],["3","Review 1"],["0123","全部"]].map(([id,n])=>`<button class="chip ${id===selUnit?"sel":""}" data-u="${id}">${n}</button>`).join("");
   $("modeOpts").innerHTML=MODES.map(m=>`<button class="chip ${m.id===selMode?"sel":""}" data-m="${m.id}">${m.name}</button>`).join("");
   $("modeDesc").textContent=MODES.find(m=>m.id===selMode).desc;
   $("cnt").textContent=pool().length;
@@ -303,7 +303,7 @@ $("unitOpts").onclick=e=>{const b=e.target.closest("[data-u]");if(b){selUnit=b.d
 $("modeOpts").onclick=e=>{const b=e.target.closest("[data-m]");if(b){selMode=b.dataset.m;renderMenu()}};
 let studyFilter="all";
 $("studyOpts").onclick=e=>{const b=e.target.closest("[data-sf]");if(b){studyFilter=b.dataset.sf;$("studyNote").textContent="";renderMenu()}};
-const UNIT_LABEL={1:"Unit 1",2:"Unit 2",12:"Unit 1 + 2"};
+const UNIT_LABEL={0:"開學複習",1:"Unit 1",2:"Unit 2",3:"Review 1","0123":"全部"};const UL=u=>UNIT_LABEL[u];
 $("startBtn").onclick=()=>start(pool());
 $("againBtn").onclick=()=>start(pool());
 $("missBtn").onclick=()=>start([...lastMissed.values()],"錯題練習");
@@ -347,7 +347,7 @@ function nextWord(){
   G.hinted=G.chars.map(()=>false);G.typed=[];G.hintUsed=false;G.mistakes=0;G.state="play";
   G.tileUsed=[];G.wordT0=performance.now();
   $("qe").textContent=w.e;$("qz").textContent=w.zh;
-  $("qu").textContent="Unit "+w.u;$("qu").className="qu u"+w.u;
+  $("qu").textContent=UL(w.u);$("qu").className="qu u"+w.u;
   $("fb").textContent="";$("fb").className="";
   const retried=G.queue.filter(q=>q.retry).length;
   $("prog").textContent=item.retry?`🔁 複習 ${G.qi-(G.queue.length-retried)}/${retried}`:`第 ${G.qi}/${G.total} 個`;
@@ -552,8 +552,8 @@ function statusOf(l){
 const CSV_HEAD=["日期","姓名","範圍","作答方式","單元","單字","中文","結果","你的答案","用提示","回合"];
 function recRows(r){
   const d=fmtDate(r.date),m=r.mode==="tiles"?"點字母":"打字";
-  const rows=r.log.map(l=>[d,r.name,r.scope,m,"Unit "+l.u,l.en,l.zh,statusOf(l),l.typed,l.hint?"是":"否",l.retry?"複習":"第一輪"]);
-  (r.untested||[]).forEach(w=>rows.push([d,r.name,r.scope,m,"Unit "+w.u,w.en,w.zh,"未考","","",""]));
+  const rows=r.log.map(l=>[d,r.name,r.scope,m,UL(l.u),l.en,l.zh,statusOf(l),l.typed,l.hint?"是":"否",l.retry?"複習":"第一輪"]);
+  (r.untested||[]).forEach(w=>rows.push([d,r.name,r.scope,m,UL(w.u),w.en,w.zh,"未考","","",""]));
   return rows;
 }
 const csvEsc=v=>{v=String(v??"");return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
@@ -644,7 +644,7 @@ function startStudy(words,label,force){
 function studyWord(){
   const w=S.words[S.i];S.w=w;S.chars=[...w.en];S.tries3=0;S.peek=false;
   $("sE").textContent=w.e;$("sZ").textContent=w.zh;
-  $("sU").textContent="Unit "+w.u;$("sU").className="qu u"+w.u;
+  $("sU").textContent=UL(w.u);$("sU").className="qu u"+w.u;
   $("sProg").textContent=`第 ${S.i+1}/${S.words.length} 個`;
   $("sBar").style.width=(S.i/S.words.length*100)+"%";
   setStage(1);

@@ -5,7 +5,7 @@
 
 ## 拼字挑戰 天氣與心情
 網址：https://davycmg.github.io/HTML/vocab_spelling_weather.html
-（Unit 1 How's the Weather? + Unit 2 Are You Thirsty?，20 個單字；進度與上一個遊戲分開存）
+（開學複習 + Unit 1 + Unit 2 + Review 1，課本照片中找得到的 114 個單字；進度與上一個遊戲分開存）
 
 ### 存檔說明（兩個遊戲相同）
 - 成績、熟練度、名字都**自動存在這台裝置的這個瀏覽器**，不會上傳到任何伺服器。
