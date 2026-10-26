@@ -296,7 +296,7 @@ document.querySelectorAll(".muteBtn").forEach(b=>b.onclick=()=>{
 /* ===== 選單 ===== */
 const MODES=[
   {id:"type",name:"⌨️ 打字",desc:"用鍵盤直接打出英文（電腦最快）。"},
-  {id:"tiles",name:"🔤 點字母",desc:"點下方的字母方塊來拼（手機、平板方便）。"}
+  {id:"tiles",name:"🔤 點字母",desc:"每一格有 5 個字母可以選，只有 1 個是對的，其他是長得或聽起來很像的字母（手機、平板方便）。"}
 ];
 function renderMenu(){
   $("unitOpts").innerHTML=[["1","Unit 1"],["2","Unit 2"],["12","Unit 1 + 2"]].map(([id,n])=>`<button class="chip ${id===selUnit?"sel":""}" data-u="${id}">${n}</button>`).join("");
@@ -329,7 +329,7 @@ function start(words,label){
   updHintBtn();
   show("game");
   $("combo").textContent="";$("score").textContent="⭐ 0";
-  $("tip").textContent=(selMode==="type"?"直接用鍵盤打字（要大寫的用 Shift），Backspace 退格，打滿自動判斷":"點下面的字母方塊依序拼出單字")+"　※注意大小寫";
+  $("tip").textContent=(selMode==="type"?"直接用鍵盤打字（要大寫的用 Shift），Backspace 退格，打滿自動判斷":"每一格從 5 個相似的字母中選出正確的")+"　※注意大小寫";
   G.timer=setInterval(tickTimer,100);
   nextWord();
 }
@@ -377,9 +377,20 @@ function renderSlots(cls){
 function buildTiles(){
   const box=$("tiles");
   if(selMode!=="tiles"){box.innerHTML="";return}
-  // 只放這個單字需要的字母（大小寫照單字），沒有多餘的字母
-  const set=shuffle(G.chars.filter(isLetter));
-  box.innerHTML=set.map((c,i)=>`<button class="tile" data-i="${i}" data-c="${c}">${c}</button>`).join("");
+  // 每一格給 5 個選項：正確字母＋4 個相似的字母（母音配母音、子音配相近子音）
+  const idx=nextIdx();
+  if(idx<0){box.innerHTML="";return}
+  box.innerHTML=letterChoices(G.chars[idx]).map(c=>`<button class="tile" data-c="${c}">${c}</button>`).join("");
+}
+const SIMILAR={
+  a:"eiou",e:"aiou",i:"aeou",o:"aeiu",u:"aeio",y:"ieau",
+  b:"dphn",c:"kszg",d:"bptg",f:"vtph",g:"qjck",h:"nbkl",j:"gyzq",k:"cgxh",l:"thfi",m:"nwhr",
+  n:"mhru",p:"bqdt",q:"gpbd",r:"nlmw",s:"czxf",t:"dflk",v:"fwbz",w:"vmnh",x:"zskc",z:"sxjc"
+};
+function letterChoices(ch){
+  const lo=ch.toLowerCase(),up=ch!==lo;
+  const pool=shuffle([...(SIMILAR[lo]||"aeiou")].filter(x=>x!==lo)).slice(0,4);
+  return shuffle([lo,...pool]).map(x=>up?x.toUpperCase():x);
 }
 /* --- 輸入 --- */
 function nextIdx(){return G.filled.findIndex((c,i)=>c===null&&isLetter(G.chars[i]))}
@@ -404,7 +415,7 @@ function backspace(){
 $("tiles").addEventListener("click",e=>{
   const t=e.target.closest(".tile");if(!t||t.classList.contains("used"))return;
   const r=putLetter(t.dataset.c,true);
-  if(r===true)t.classList.add("used");
+  if(r===true)buildTiles();
   else{t.classList.add("bad");setTimeout(()=>t.classList.remove("bad"),350)}
 });
 document.addEventListener("keydown",e=>{
@@ -453,8 +464,7 @@ function useHint(){
   G.filled[idx]=G.chars[idx];G.hinted[idx]=true;
   G.hintUsed=true;G.combo=0;$("combo").textContent="";
   G.score=Math.max(0,G.score-HINT_COST);$("score").textContent="⭐ "+G.score;
-  const t=document.querySelector(`#tiles .tile:not(.used)[data-c="${G.chars[idx]}"]`);if(t)t.classList.add("used");
-  sndKey();renderSlots();
+  sndKey();renderSlots();buildTiles();
   if(nextIdx()<0)judge(true);
 }
 /* --- 判斷 --- */
@@ -647,7 +657,7 @@ function startStudy(words,label,force){
   list.sort((a,b)=>M_ORDER[masteryOf(a.en,m)]-M_ORDER[masteryOf(b.en,m)]||Math.random()-.5);
   S={words:list,i:0,stage:1,state:"idle",chars:[],filled:[],typed:[],peek:false,tries3:0,results:[],label:label||UNIT_LABEL[selUnit]};
   show("study");$("sCard").classList.remove("hide");$("sSum").classList.add("hide");
-  $("sTip").textContent=selMode==="type"?"用鍵盤打字，Backspace 退格（要大寫的用 Shift）":"點下面的字母方塊依序拼出單字";
+  $("sTip").textContent=selMode==="type"?"用鍵盤打字，Backspace 退格（要大寫的用 Shift）":"每一格從 5 個相似的字母中選出正確的";
   studyWord();
 }
 function studyWord(){
@@ -691,7 +701,9 @@ function sRenderSlots(cls){
 function sBuildTiles(){
   const box=$("sTiles");
   if(selMode!=="tiles"){box.innerHTML="";return}
-  box.innerHTML=shuffle(S.chars.filter(isLetter)).map((c,i)=>`<button class="tile" data-c="${c}">${c}</button>`).join("");
+  const idx=sNextIdx();
+  if(idx<0){box.innerHTML="";return}
+  box.innerHTML=letterChoices(S.chars[idx]).map(c=>`<button class="tile" data-c="${c}">${c}</button>`).join("");
 }
 function sNextIdx(){return S.filled.findIndex((c,i)=>c===null&&isLetter(S.chars[i]))}
 function sPut(ch,fromTile){
@@ -783,7 +795,7 @@ $("sPeek").onclick=()=>{
 $("sTiles").addEventListener("click",e=>{
   const t=e.target.closest(".tile");if(!t||t.classList.contains("used"))return;
   const r=sPut(t.dataset.c,true);
-  if(r===true)t.classList.add("used");
+  if(r===true)sBuildTiles();
   else if(r===false){t.classList.add("bad");setTimeout(()=>t.classList.remove("bad"),350)}
 });
 $("sSlots").addEventListener("click",()=>{if(selMode==="type"&&S)$("sTypeIn").focus()});
