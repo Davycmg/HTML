@@ -2,6 +2,7 @@
 
 ## 拼字挑戰 Unit 1-2
 網址：https://davycmg.github.io/HTML/vocab_spelling_test.html
+（Wonder World 課本全部找得到的 446 個單字，可依單元選範圍）
 
 ## 拼字挑戰 天氣與心情
 網址：https://davycmg.github.io/HTML/vocab_spelling_weather.html
