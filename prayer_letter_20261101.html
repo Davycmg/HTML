@@ -12,25 +12,25 @@
 body{margin:0;background:var(--bg);font-family:'Noto Sans TC',sans-serif;color:var(--ink)}
 main{max-width:560px;margin:0 auto;padding:24px 16px 48px;display:flex;flex-direction:column;gap:24px}
 .wrap{container-type:inline-size;width:100%}
-.card{--u:calc(100cqw / 1080);width:100%;aspect-ratio:4/5;position:relative;overflow:hidden;border-radius:calc(var(--u)*48);
+.card{--u:calc(100cqw / 1080);width:100%;min-height:calc(100cqw * 1.25);position:relative;overflow:hidden;border-radius:calc(var(--u)*48);
   padding:calc(var(--u)*88);display:flex;flex-direction:column;gap:calc(var(--u)*48);box-shadow:0 6px 20px rgba(27,31,59,.12)}
 .blob{position:absolute;border-radius:50%}
-.top{position:relative;display:flex;justify-content:space-between;align-items:center;font-size:calc(var(--u)*30);font-weight:700}
+.top{position:relative;display:flex;justify-content:space-between;align-items:center;font-size:max(18px,calc(var(--u)*30));font-weight:700}
 .pill{background:var(--ink);color:#fff;padding:calc(var(--u)*14) calc(var(--u)*30);border-radius:999px}
 .rel{position:relative}
 h1,h2{margin:0;font-weight:900}
 .list{position:relative;display:flex;flex-direction:column;gap:calc(var(--u)*24)}
 .item{background:#fff;border-radius:calc(var(--u)*32);padding:calc(var(--u)*36) calc(var(--u)*40);display:flex;gap:calc(var(--u)*28);align-items:center}
-.num{flex-shrink:0;width:calc(var(--u)*72);height:calc(var(--u)*72);border-radius:50%;font-size:calc(var(--u)*36);font-weight:900;display:flex;align-items:center;justify-content:center}
-.t{font-size:calc(var(--u)*38);font-weight:700;line-height:1.45}
-.t small{display:block;font-size:calc(var(--u)*30);font-weight:500}
-.sub{font-size:calc(var(--u)*34);font-weight:500;line-height:1.5}
+.num{flex-shrink:0;width:max(34px,calc(var(--u)*72));height:max(34px,calc(var(--u)*72));border-radius:50%;font-size:max(21px,calc(var(--u)*36));font-weight:900;display:flex;align-items:center;justify-content:center}
+.t{font-size:max(21px,calc(var(--u)*38));font-weight:700;line-height:1.45}
+.t small{display:block;font-size:max(18px,calc(var(--u)*30));font-weight:500}
+.sub{font-size:max(19px,calc(var(--u)*34));font-weight:500;line-height:1.5}
 .big{background:#fff;border-radius:calc(var(--u)*40);padding:calc(var(--u)*56);display:flex;flex-direction:column;gap:calc(var(--u)*28)}
-.big .k{font-size:calc(var(--u)*32);font-weight:700;color:#C2410C}
-.big .v{font-size:calc(var(--u)*48);font-weight:900;line-height:1.4}
+.big .k{font-size:max(19px,calc(var(--u)*32));font-weight:700;color:#C2410C}
+.big .v{font-size:max(23px,calc(var(--u)*48));font-weight:900;line-height:1.4}
 .box{background:#fff;border-radius:calc(var(--u)*32);padding:calc(var(--u)*40) calc(var(--u)*44);display:flex;flex-direction:column;gap:calc(var(--u)*14)}
-.box .h{font-size:calc(var(--u)*40);font-weight:900}
-.box .d{font-size:calc(var(--u)*30);font-weight:500;line-height:1.55}
+.box .h{font-size:max(21px,calc(var(--u)*40));font-weight:900}
+.box .d{font-size:max(18px,calc(var(--u)*30));font-weight:500;line-height:1.55}
 .cta{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:16px 24px;border-radius:999px;
   background:var(--ink);color:#fff;text-decoration:none;font-size:20px;font-weight:900}
 .cta:hover{background:#3D4580}
@@ -46,12 +46,12 @@ h1,h2{margin:0;font-weight:900}
   <div class="blob" style="left:calc(var(--u)*-120);bottom:calc(var(--u)*-140);width:calc(var(--u)*380);height:calc(var(--u)*380);background:#fff;opacity:.55"></div>
   <div class="top"><span class="pill">2026.11.01</span><span>1 / 4</span></div>
   <div class="rel" style="display:flex;flex-direction:column;gap:calc(var(--u)*16);margin-top:calc(var(--u)*40)">
-    <div style="font-size:calc(var(--u)*44);font-weight:700">大衛的</div>
+    <div style="font-size:max(23px,calc(var(--u)*44));font-weight:700">大衛的</div>
     <h1 style="font-size:calc(var(--u)*150);line-height:1;letter-spacing:calc(var(--u)*4)">代禱信</h1>
   </div>
   <div class="rel" style="display:flex;align-items:center;gap:calc(var(--u)*20);margin-top:calc(var(--u)*24)">
-    <div style="background:#fff;font-size:calc(var(--u)*44);font-weight:900;padding:calc(var(--u)*10) calc(var(--u)*32);border-radius:calc(var(--u)*20)">感恩讚美</div>
-    <div style="font-size:calc(var(--u)*32);font-weight:500">謝謝大家的禱告</div>
+    <div style="background:#fff;font-size:max(23px,calc(var(--u)*44));font-weight:900;padding:calc(var(--u)*10) calc(var(--u)*32);border-radius:calc(var(--u)*20)">感恩讚美</div>
+    <div style="font-size:max(19px,calc(var(--u)*32));font-weight:500">謝謝大家的禱告</div>
   </div>
   <div class="list">
     <div class="item"><div class="num" style="background:#FF8A5B">1</div><div class="t">媽媽第一輪化療順利完成<small>謝謝三蘆教會姊妹送餐陪伴</small></div></div>
@@ -75,8 +75,8 @@ h1,h2{margin:0;font-weight:900}
 </div></section>
 
 <section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 6px 20px rgba(27,31,59,.12)">
-  <div style="font-size:22px;font-weight:900">一起支持媽媽的休養</div>
-  <p style="margin:0;font-size:17px;line-height:1.7;font-weight:500">這是大衛為媽媽建立的物資募集網站，歡迎點進去看看，一起陪伴媽媽走過治療期。</p>
+  <div style="font-size:24px;font-weight:900">一起支持媽媽的休養</div>
+  <p style="margin:0;font-size:19px;line-height:1.7;font-weight:500">這是大衛為媽媽建立的物資募集網站，歡迎點進去看看，一起陪伴媽媽走過治療期。</p>
   <a class="cta" href="https://script.google.com/macros/s/AKfycbzgDP2T5AzS2leV-ZHHTiV3IU1qrVwVFK8kVacJS8tgaSvG-8LFWxf3MKIfKLE6513I/exec" target="_blank" rel="noopener">前往物資募集網站 →</a>
 </section>
 
@@ -104,8 +104,8 @@ h1,h2{margin:0;font-weight:900}
   <div class="rel" style="display:flex;align-items:flex-end;gap:calc(var(--u)*24);margin-top:calc(var(--u)*20)">
     <div style="font-size:calc(var(--u)*160);line-height:.9;font-weight:900;color:#0F7A45">27</div>
     <div style="display:flex;flex-direction:column;gap:calc(var(--u)*6);padding-bottom:calc(var(--u)*8)">
-      <div style="font-size:calc(var(--u)*34);font-weight:700">天</div>
-      <div style="font-size:calc(var(--u)*52);font-weight:900">選舉倒數衝刺</div>
+      <div style="font-size:max(19px,calc(var(--u)*34));font-weight:700">天</div>
+      <div style="font-size:max(26px,calc(var(--u)*52));font-weight:900">選舉倒數衝刺</div>
     </div>
   </div>
   <div class="list">
@@ -113,8 +113,8 @@ h1,h2{margin:0;font-weight:900}
     <div class="box"><div class="h">福音事工與靈命對焦</div><div class="d">市議會活泉團契 × 市府信望愛團契 在禱告和福音上的連結<br>活泉團契啟發和RPG的組織更新<br>大衛身心靈的安息，工作服事都有節制</div></div>
   </div>
   <div class="rel" style="margin-top:auto;display:flex;align-items:center;gap:calc(var(--u)*20)">
-    <svg aria-hidden="true" style="width:calc(var(--u)*56);height:calc(var(--u)*56)" viewBox="0 0 24 24" fill="#FF6B5B" stroke="#1B1F3B" stroke-width="1.5" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
-    <div style="font-size:calc(var(--u)*44);font-weight:900">謝謝大家的代禱</div>
+    <svg aria-hidden="true" style="width:max(28px,calc(var(--u)*56));height:max(28px,calc(var(--u)*56))" viewBox="0 0 24 24" fill="#FF6B5B" stroke="#1B1F3B" stroke-width="1.5" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+    <div style="font-size:max(23px,calc(var(--u)*44));font-weight:900">謝謝大家的代禱</div>
   </div>
 </div></section>
 
