@@ -307,14 +307,23 @@ const WORDS=[
  [0, "milk tea", "奶茶", "🧋"],
  [0, "drawing", "畫畫", "🖍️"],
  [0, "art", "美術", "🎨"],
- [1, "Australia", "澳大利亞", "🦘"],
- [1, "Canada", "加拿大", "🍁"],
- [1, "France", "法國", "🗼"],
- [1, "India", "印度", "🕌"],
- [1, "Japan", "日本", "🗻"],
- [1, "Taiwan", "臺灣", "🧋"],
- [1, "the UK", "英國", "💂"],
- [1, "the USA", "美國", "🗽"],
+ [4, "Australia", "澳大利亞", "🦘"],
+ [4, "Canada", "加拿大", "🍁"],
+ [4, "France", "法國", "🗼"],
+ [4, "India", "印度", "🕌"],
+ [4, "Japan", "日本", "🗻"],
+ [4, "Taiwan", "臺灣", "🧋"],
+ [4, "the UK", "英國", "💂"],
+ [4, "the USA", "美國", "🗽"],
+ [4, "cold", "感冒", "🤧"],
+ [4, "cough", "咳嗽", "😷"],
+ [4, "fever", "發燒", "🤒"],
+ [4, "headache", "頭痛", "🤕"],
+ [4, "stomachache", "胃痛", "😣"],
+ [4, "toothache", "牙痛", "🦷"],
+ [4, "runny nose", "流鼻水", "👃"],
+ [4, "sore throat", "喉嚨痛", "😖"],
+ [4, "wrong", "錯誤的；不對勁的", "❓"],
  [1, "the ROC", "中華民國", "🇹🇼"],
  [1, "clerk", "店員", "🧑‍💼"],
  [1, "perm", "燙髮", "💇"],
@@ -362,15 +371,6 @@ const WORDS=[
  [1, "he", "他", "👨"],
  [1, "bun", "小圓麵包", "🥯"],
  [1, "burn", "燃燒", "🔥"],
- [2, "cold", "感冒", "🤧"],
- [2, "cough", "咳嗽", "😷"],
- [2, "fever", "發燒", "🤒"],
- [2, "headache", "頭痛", "🤕"],
- [2, "stomachache", "胃痛", "😣"],
- [2, "toothache", "牙痛", "🦷"],
- [2, "runny nose", "流鼻水", "👃"],
- [2, "sore throat", "喉嚨痛", "😖"],
- [2, "wrong", "錯誤的；不對勁的", "❓"],
  [2, "head", "頭", "🙆"],
  [2, "tooth", "牙齒", "🦷"],
  [2, "nose", "鼻子", "👃"],
@@ -456,7 +456,7 @@ const MODES=[
   {id:"tiles",name:"🔤 點字母",desc:"每一格有 5 個字母可以選，只有 1 個是對的，其他是長得或聽起來很像的字母（手機、平板方便）。"}
 ];
 function renderMenu(){
-  $("unitOpts").innerHTML=[["0", "開學複習"], ["1", "Unit 1"], ["2", "Unit 2"], ["12", "Unit 1 + 2"], ["3", "Review 1"], ["0123", "全部"]].map(([id,n])=>`<button class="chip ${id===selUnit?"sel":""}" data-u="${id}">${n}</button>`).join("");
+  $("unitOpts").innerHTML=[["0", "開學複習"], ["4", "Vocabulary"], ["1", "Unit 1"], ["2", "Unit 2"], ["12", "Unit 1 + 2"], ["3", "Review 1"], ["01234", "全部"]].map(([id,n])=>`<button class="chip ${id===selUnit?"sel":""}" data-u="${id}">${n}</button>`).join("");
   $("modeOpts").innerHTML=MODES.map(m=>`<button class="chip ${m.id===selMode?"sel":""}" data-m="${m.id}">${m.name}</button>`).join("");
   $("modeDesc").textContent=MODES.find(m=>m.id===selMode).desc;
   $("cnt").textContent=pool().length;
@@ -469,7 +469,7 @@ $("unitOpts").onclick=e=>{const b=e.target.closest("[data-u]");if(b){selUnit=b.d
 $("modeOpts").onclick=e=>{const b=e.target.closest("[data-m]");if(b){selMode=b.dataset.m;renderMenu()}};
 let studyFilter="all";
 $("studyOpts").onclick=e=>{const b=e.target.closest("[data-sf]");if(b){studyFilter=b.dataset.sf;$("studyNote").textContent="";renderMenu()}};
-const UNIT_LABEL={"0": "開學複習", "1": "Unit 1", "2": "Unit 2", "12": "Unit 1 + 2", "3": "Review 1", "0123": "全部"};const UL=u=>UNIT_LABEL[u]||("Unit "+u);
+const UNIT_LABEL={"0": "開學複習", "4": "Vocabulary", "1": "Unit 1", "2": "Unit 2", "12": "Unit 1 + 2", "3": "Review 1", "01234": "全部", "0123": "全部"};const UL=u=>UNIT_LABEL[u]||("Unit "+u);
 $("startBtn").onclick=()=>start(pool());
 $("againBtn").onclick=()=>start(pool());
 $("missBtn").onclick=()=>start([...lastMissed.values()],"錯題練習");
